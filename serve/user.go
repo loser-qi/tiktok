@@ -8,7 +8,7 @@ import (
 
 func HasUser(username string) bool {
 	var cnt int64
-	util.Db.Model(&User{}).Where("username=?", username).Count(&cnt)
+	util.Db.Model(&User{}).Where("username like ?", username).Count(&cnt)
 	return cnt != 0
 }
 
@@ -26,7 +26,7 @@ func GetUserByUsernameAndPassword(username, password string) (*User, error) {
 		return nil, errors.New("user not exist")
 	}
 	user := &User{}
-	util.Db.Where("username = ? and password = ?", username, password).Take(user)
+	util.Db.Where("username like ? and password like ?", username, password).Take(user)
 	if user.Id == 0 {
 		return nil, errors.New("password is not correct")
 	}
