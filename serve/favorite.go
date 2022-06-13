@@ -5,12 +5,14 @@ import (
 	"tiktok/util"
 )
 
+// HasFavorite 数据库中是否存储了user对video的点赞关系
 func HasFavorite(userId, videoId int64) bool {
 	var cnt int64
 	util.Db.Table("is_favorite").Where("user_id = ? and video_id = ?", userId, videoId).Count(&cnt)
 	return cnt != 0
 }
 
+// GetFavorite 获取user对video的点赞状态
 func GetFavorite(userId, videoId int64) bool {
 	if !HasFavorite(userId, videoId) {
 		return false
@@ -20,12 +22,14 @@ func GetFavorite(userId, videoId int64) bool {
 	return actionType == 1
 }
 
-func GetVideoIdList(userId int64) []int64 {
+// GetFavoriteVideoIdList 获取user点赞的所有video
+func GetFavoriteVideoIdList(userId int64) []int64 {
 	var videoIdList []int64
 	util.Db.Table("is_favorite").Select("video_id").Where("user_id = ? and action_type = 1", userId).Find(&videoIdList)
 	return videoIdList
 }
 
+// SaveFavorite 保存点赞关系
 func SaveFavorite(userId, videoId int64, actionType int) error {
 	var resErr error = nil
 	if !HasFavorite(userId, videoId) {

@@ -8,6 +8,7 @@ import (
 
 var DefaultCoverFilename = "cover.png"
 
+// MakeCover 制作封面
 func MakeCover(filename, dirname string) string {
 	suffix := path.Ext(filename)
 	if suffix != ".mp4" {

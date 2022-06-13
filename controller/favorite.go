@@ -8,10 +8,14 @@ import (
 	"tiktok/util"
 )
 
+// Favorite 赞操作
 func Favorite(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
 	videoIdStr := c.Query("video_id")
 	actionTypeStr := c.Query("action_type")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -20,6 +24,8 @@ func Favorite(c *gin.Context) {
 		})
 		return
 	}
+
+	// 存储点赞关系
 	videoId, _ := strconv.ParseInt(videoIdStr, 10, 64)
 	actionType, _ := strconv.Atoi(actionTypeStr)
 	err = serve.SaveFavorite(userId, videoId, actionType)
@@ -35,8 +41,12 @@ func Favorite(c *gin.Context) {
 	})
 }
 
+// FavoriteList 点赞列表
 func FavoriteList(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -45,7 +55,11 @@ func FavoriteList(c *gin.Context) {
 		})
 		return
 	}
-	videoIdList := serve.GetVideoIdList(userId)
+
+	// 获取所有点赞的videoId
+	videoIdList := serve.GetFavoriteVideoIdList(userId)
+
+	// 根据videoId获取video
 	videoResp := make([]VideoResp, len(videoIdList))
 	for i, videoId := range videoIdList {
 		video, _ := serve.GetVideoById(videoId)

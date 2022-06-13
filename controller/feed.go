@@ -7,9 +7,16 @@ import (
 	"tiktok/util"
 )
 
+// Feed 视频流
 func Feed(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+
+	//解析token
 	userId, err := util.DecodeToken(tokenStr)
+
+	// 按时间倒序获取视频(设置限制为30)
+	// 根据登录状态获取点赞关系和关注关系
 	videoList := serve.GetVideoListByLimit(30)
 	videoResp := make([]VideoResp, len(videoList))
 	if err != nil {

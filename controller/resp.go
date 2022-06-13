@@ -5,6 +5,8 @@ import (
 	"tiktok/util"
 )
 
+// 响应内容结构体以及生成响应内容的函数
+
 type Resp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`

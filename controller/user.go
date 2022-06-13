@@ -7,9 +7,13 @@ import (
 	"tiktok/util"
 )
 
+// UserRegister 用户注册
 func UserRegister(c *gin.Context) {
+	// 获取参数
 	username := c.Query("username")
 	password := c.Query("password")
+
+	// 检查是否合法
 	if ok := util.CheckUsername(username) && util.CheckPassword(password); !ok {
 		c.JSON(http.StatusOK, Resp{
 			StatusCode: 1,
@@ -17,6 +21,8 @@ func UserRegister(c *gin.Context) {
 		})
 		return
 	}
+
+	// 检查用户是否已存在
 	if serve.HasUser(username) {
 		c.JSON(http.StatusOK, Resp{
 			StatusCode: 2,
@@ -24,7 +30,11 @@ func UserRegister(c *gin.Context) {
 		})
 		return
 	}
+
+	// 存储用户信息到数据库
 	userId := serve.SaveUser(username, password)
+
+	// 生成token
 	tokenStr := util.EncodeToken(userId)
 	c.JSON(http.StatusOK, UserRegisterResp{
 		Resp: Resp{
@@ -35,9 +45,13 @@ func UserRegister(c *gin.Context) {
 	})
 }
 
+// UserLogin 用户登录
 func UserLogin(c *gin.Context) {
+	// 获取参数
 	username := c.Query("username")
 	password := c.Query("password")
+
+	// 检查是否合法
 	if ok := util.CheckUsername(username) && util.CheckPassword(password); !ok {
 		c.JSON(http.StatusOK, Resp{
 			StatusCode: 1,
@@ -45,6 +59,8 @@ func UserLogin(c *gin.Context) {
 		})
 		return
 	}
+
+	// 从数据库查找用户名和密码与输入一致的user
 	user, err := serve.GetUserByUsernameAndPassword(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -53,6 +69,8 @@ func UserLogin(c *gin.Context) {
 		})
 		return
 	}
+
+	// 生成token
 	tokenStr := util.EncodeToken(user.Id)
 	c.JSON(http.StatusOK, UserLoginResp{
 		Resp: Resp{
@@ -63,8 +81,12 @@ func UserLogin(c *gin.Context) {
 	})
 }
 
+// UserInfo 用户信息
 func UserInfo(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -73,6 +95,8 @@ func UserInfo(c *gin.Context) {
 		})
 		return
 	}
+
+	// 根据userId获取user
 	user, _ := serve.GetUserById(userId)
 	c.JSON(http.StatusOK, UserInfoResp{
 		Resp: Resp{

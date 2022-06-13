@@ -20,6 +20,7 @@ var Db *gorm.DB
 var dbConf *DbConf
 var once sync.Once
 
+// 数据库初始化
 func init() {
 	once.Do(func() {
 		dbConf = &DbConf{}

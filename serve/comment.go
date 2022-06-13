@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// GetCommentListByVideoId 根据videoId获取评论列表
 func GetCommentListByVideoId(videoId int64) []Comment {
 	video := &Video{
 		Id: videoId,
@@ -16,12 +17,14 @@ func GetCommentListByVideoId(videoId int64) []Comment {
 	return video.CommentList
 }
 
-func GetVideoIdByComment(id int64) int64 {
+// GetVideoIdByCommentId 根据id获取评论所在视频
+func GetVideoIdByCommentId(id int64) int64 {
 	var videoId int64
 	util.Db.Model(&Comment{}).Select("video_id").Where("id = ?", id).Take(&videoId)
 	return videoId
 }
 
+// SaveComment 保存评论
 func SaveComment(userId, videoId int64, text string, createTime time.Time) error {
 	comment := &Comment{
 		UserId:     userId,
@@ -41,8 +44,9 @@ func SaveComment(userId, videoId int64, text string, createTime time.Time) error
 	return resErr
 }
 
+// DelCommentById 根据id删除评论
 func DelCommentById(id int64) error {
-	videoId := GetVideoIdByComment(id)
+	videoId := GetVideoIdByCommentId(id)
 	resErr := util.Db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("id = ?", id).Delete(&Comment{}); err.Error != nil {
 			return err.Error

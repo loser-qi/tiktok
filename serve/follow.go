@@ -5,12 +5,14 @@ import (
 	"tiktok/util"
 )
 
+// HasFollow 数据库中是否存储了followerUser对followedUser的关注关系
 func HasFollow(followerUserId, followedUserId int64) bool {
 	var cnt int64
 	util.Db.Table("is_follow").Where("follower_user_id = ? and followed_user_id = ?", followerUserId, followedUserId).Count(&cnt)
 	return cnt != 0
 }
 
+// GetFollow 获取followerUser对followedUser的点赞状态
 func GetFollow(followerUserId, followedUserId int64) bool {
 	if followedUserId == followerUserId {
 		return true
@@ -23,6 +25,7 @@ func GetFollow(followerUserId, followedUserId int64) bool {
 	return actionType == 1
 }
 
+// GetFollowList 获取user的关注列表
 func GetFollowList(userId int64) []User {
 	var userIdList []int64
 	var userList []User
@@ -35,6 +38,7 @@ func GetFollowList(userId int64) []User {
 	return userList
 }
 
+// GetFollowerList 获取user的粉丝列表
 func GetFollowerList(userId int64) []User {
 	var userIdList []int64
 	var userList []User
@@ -47,6 +51,7 @@ func GetFollowerList(userId int64) []User {
 	return userList
 }
 
+// SaveFollow 保存关注关系
 func SaveFollow(followerUserId, followedUserId int64, actionType int) error {
 	var resErr error = nil
 	if !HasFollow(followerUserId, followedUserId) {

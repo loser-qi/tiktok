@@ -14,6 +14,7 @@ type Claim struct {
 var secret = []byte("g_c_s_j")
 var expireTime = time.Now().Add(30 * time.Minute)
 
+// EncodeToken token编码
 func EncodeToken(id int64) string {
 	claim := &Claim{
 		Id: id,
@@ -28,6 +29,7 @@ func EncodeToken(id int64) string {
 	return tokenStr
 }
 
+// DecodeToken token解码
 func DecodeToken(tokenStr string) (int64, error) {
 	if tokenStr == "" {
 		return 0, errors.New("token is invalid")

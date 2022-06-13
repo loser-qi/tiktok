@@ -6,12 +6,14 @@ import (
 	"tiktok/util"
 )
 
+// HasUser 根据username查询是否存在user
 func HasUser(username string) bool {
 	var cnt int64
 	util.Db.Model(&User{}).Where("username like ?", username).Count(&cnt)
 	return cnt != 0
 }
 
+// GetUserById 根据id获取user
 func GetUserById(id int64) (*User, error) {
 	user := &User{}
 	util.Db.Where("id = ?", id).Take(user)
@@ -21,6 +23,7 @@ func GetUserById(id int64) (*User, error) {
 	return user, nil
 }
 
+// GetUserByUsernameAndPassword 根据username和password获取user
 func GetUserByUsernameAndPassword(username, password string) (*User, error) {
 	if !HasUser(username) {
 		return nil, errors.New("user not exist")
@@ -33,6 +36,7 @@ func GetUserByUsernameAndPassword(username, password string) (*User, error) {
 	return user, nil
 }
 
+// SaveUser 存储user到数据库
 func SaveUser(username, password string) int64 {
 	user := &User{
 		Username: username,
@@ -42,6 +46,7 @@ func SaveUser(username, password string) int64 {
 	return user.Id
 }
 
+// UpdateFollowCount 更改关注数
 func UpdateFollowCount(userId int64, actionType int, tx *gorm.DB) error {
 	var expr string
 	if actionType == 1 {
@@ -56,6 +61,7 @@ func UpdateFollowCount(userId int64, actionType int, tx *gorm.DB) error {
 	return nil
 }
 
+// UpdateFollowerCount 更改粉丝数
 func UpdateFollowerCount(userId int64, actionType int, tx *gorm.DB) error {
 	var expr string
 	if actionType == 1 {

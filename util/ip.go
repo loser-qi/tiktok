@@ -2,6 +2,7 @@ package util
 
 import "net"
 
+// GetIp 获取当前ip
 func GetIp() string {
 	netInterfaces, _ := net.Interfaces()
 	for i := 0; i < len(netInterfaces); i++ {

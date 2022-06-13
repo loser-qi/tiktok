@@ -8,8 +8,14 @@ import (
 	"tiktok/util"
 )
 
+// Relation 关系操作
 func Relation(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+	toUserIdStr := c.Query("to_user_id")
+	actionTypeStr := c.Query("action_type")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -18,8 +24,8 @@ func Relation(c *gin.Context) {
 		})
 		return
 	}
-	toUserIdStr := c.Query("to_user_id")
-	actionTypeStr := c.Query("action_type")
+
+	// 存储关注关系
 	toUserId, _ := strconv.ParseInt(toUserIdStr, 10, 64)
 	actionType, _ := strconv.Atoi(actionTypeStr)
 	err = serve.SaveFollow(userId, toUserId, actionType)
@@ -35,8 +41,12 @@ func Relation(c *gin.Context) {
 	})
 }
 
+// FollowList 用户关注列表
 func FollowList(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -45,6 +55,8 @@ func FollowList(c *gin.Context) {
 		})
 		return
 	}
+
+	// 获取所有关注
 	userList := serve.GetFollowList(userId)
 	userResp := make([]UserResp, len(userList))
 	for i, user := range userList {
@@ -58,8 +70,12 @@ func FollowList(c *gin.Context) {
 	})
 }
 
+// FollowerList 用户粉丝列表
 func FollowerList(c *gin.Context) {
+	// 获取参数
 	tokenStr := c.Query("token")
+
+	// 解析token
 	userId, err := util.DecodeToken(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusOK, Resp{
@@ -68,6 +84,8 @@ func FollowerList(c *gin.Context) {
 		})
 		return
 	}
+
+	// 获取所有粉丝
 	userList := serve.GetFollowerList(userId)
 	userResp := make([]UserResp, len(userList))
 	for i, user := range userList {
